@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 import time
 from tqdm import tqdm
 import pandas as pd
+import os
 
 
 def link_extractor():
@@ -56,9 +57,21 @@ def create_preprocess_save_dataframe(all_data):
     df = df[df['data']!='']
 
     df.to_csv('data.csv', index=None)
+    return df
+
+
+def data_to_txt(df):
+    path = 'data'
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    for i in range(len(df)):
+        with open(f"./data/{i}.txt", 'w', encoding="utf-8") as f:
+            f.write(df['data'][i])
 
 
 if __name__=='__main__':
     urls = link_extractor()
     all_data = data_extractor(urls)
-    create_preprocess_save_dataframe(all_data)
+    df = create_preprocess_save_dataframe(all_data)
+    data_to_txt(df)

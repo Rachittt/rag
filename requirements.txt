@@ -2,3 +2,10 @@ numpy
 pandas
 duckduckgo_search
 requests
+selenium
+llama-index==0.9.40
+transformers
+einops
+accelerate
+langchain
+bitsandbytes
