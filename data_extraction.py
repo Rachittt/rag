@@ -7,9 +7,13 @@ import pandas as pd
 import os
 
 
-def link_extractor():
+def link_extractor(topic="Canoo"):
+    """
+    Function takes a topic and search all the topic related links.
+    Return all the links in a list
+    """
     with DDGS(timeout=60) as ddgs:
-        results = [r for r in ddgs.text("Canoo", max_results=1000)]
+        results = [r for r in ddgs.text(topic, max_results=1000)]
         print("Link Extraction Done")
 
     urls = [url['href'] for url in results]
@@ -17,8 +21,10 @@ def link_extractor():
 
 
 def data_extractor(urls):
+    """
+    function take list of urls and then uses selenium to extract all the body tag data.
+    """
     all_data = {}
-
     options = webdriver.ChromeOptions()
     options.add_argument("--test-type")
     options.add_argument("--disable-default-apps")
@@ -48,6 +54,11 @@ def replace(x):
     return x.replace("\n", " ")
 
 def create_preprocess_save_dataframe(all_data):
+    """
+    Funciton take a dictionary of links and there respective data
+    Creates dataframe  and preprocesses the data
+    Returns a clean dataframe
+    """
     df = pd.DataFrame(list(all_data.items()), index=None, columns=['url', 'data'])
 
     df['data'] = df['data'].apply(replace)
@@ -61,6 +72,11 @@ def create_preprocess_save_dataframe(all_data):
 
 
 def data_to_txt(df):
+    """
+    Function takes a dataframe
+    Creates a directory if not exists.
+    then creates a .txt file for each data
+    """
     path = 'data'
     if not os.path.exists(path):
         os.makedirs(path)
@@ -71,7 +87,7 @@ def data_to_txt(df):
 
 
 if __name__=='__main__':
-    urls = link_extractor()
+    urls = link_extractor("Canoo")
     all_data = data_extractor(urls)
     df = create_preprocess_save_dataframe(all_data)
     data_to_txt(df)
